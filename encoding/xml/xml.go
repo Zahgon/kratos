@@ -1,29 +1,19 @@
 package xml
 
 import (
-	"encoding/xml"
-
 	"github.com/go-kratos/kratos/v3/encoding"
 )
 
-// Name is the name registered for the xml codec.
 const Name = "xml"
 
 func init() {
 	encoding.RegisterCodec(codec{})
 }
 
-// codec is a Codec implementation with xml.
 type codec struct{}
 
-func (codec) Marshal(v any) ([]byte, error) {
-	return xml.Marshal(v)
-}
+func (codec) Marshal(v any) ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
-func (codec) Unmarshal(data []byte, v any) error {
-	return xml.Unmarshal(data, v)
-}
+func (codec) Unmarshal(data []byte, v any) error { _ = "STUB: not implemented"; return nil }
 
-func (codec) Name() string {
-	return Name
-}
+func (codec) Name() string { _ = "STUB: not implemented"; return "" }

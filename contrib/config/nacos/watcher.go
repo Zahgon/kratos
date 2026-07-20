@@ -2,8 +2,6 @@ package config
 
 import (
 	"context"
-	"path/filepath"
-	"strings"
 
 	"github.com/nacos-group/nacos-sdk-go/vo"
 
@@ -23,44 +21,12 @@ type Watcher struct {
 type cancelListenConfigFunc func(params vo.ConfigParam) (err error)
 
 func newWatcher(ctx context.Context, dataID string, group string, cancelListenConfig cancelListenConfigFunc) *Watcher {
-	ctx, cancel := context.WithCancel(ctx)
-	w := &Watcher{
-		dataID:             dataID,
-		group:              group,
-		cancelListenConfig: cancelListenConfig,
-		content:            make(chan string, 100),
-
-		ctx:    ctx,
-		cancel: cancel,
-	}
-	return w
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func (w *Watcher) Next() ([]*config.KeyValue, error) {
-	select {
-	case <-w.ctx.Done():
-		return nil, w.ctx.Err()
-	case content := <-w.content:
-		k := w.dataID
-		return []*config.KeyValue{
-			{
-				Key:    k,
-				Value:  []byte(content),
-				Format: strings.TrimPrefix(filepath.Ext(k), "."),
-			},
-		}, nil
-	}
-}
+func (w *Watcher) Next() ([]*config.KeyValue, error) { _ = "STUB: not implemented"; return nil, nil }
 
-func (w *Watcher) Close() error {
-	err := w.cancelListenConfig(vo.ConfigParam{
-		DataId: w.dataID,
-		Group:  w.group,
-	})
-	w.cancel()
-	return err
-}
+func (w *Watcher) Close() error { _ = "STUB: not implemented"; return nil }
 
-func (w *Watcher) Stop() error {
-	return w.Close()
-}
+func (w *Watcher) Stop() error { _ = "STUB: not implemented"; return nil }

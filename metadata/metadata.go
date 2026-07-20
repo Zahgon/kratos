@@ -2,125 +2,54 @@ package metadata
 
 import (
 	"context"
-	"fmt"
-	"slices"
-	"strings"
 )
 
-// Metadata is our way of representing request headers internally.
-// They're used at the RPC level and translate back and forth
-// from Transport headers.
 type Metadata map[string][]string
 
-// New creates an MD from a given key-values map.
-func New(mds ...map[string][]string) Metadata {
-	md := Metadata{}
-	for _, m := range mds {
-		for k, vList := range m {
-			for _, v := range vList {
-				md.Add(k, v)
-			}
-		}
-	}
-	return md
-}
+func New(mds ...map[string][]string) Metadata { _ = "STUB: not implemented"; return *new(Metadata) }
 
-// Add adds the key, value pair to the header.
-func (m Metadata) Add(key, value string) {
-	if key == "" {
-		return
-	}
+func (m Metadata) Add(key, value string) { _ = "STUB: not implemented"; return }
 
-	lowerKey := strings.ToLower(key)
-	m[lowerKey] = append(m[lowerKey], value)
-}
+func (m Metadata) Get(key string) string { _ = "STUB: not implemented"; return "" }
 
-// Get returns the value associated with the passed key.
-func (m Metadata) Get(key string) string {
-	v := m[strings.ToLower(key)]
-	if len(v) == 0 {
-		return ""
-	}
-	return v[0]
-}
+func (m Metadata) Set(key string, value string) { _ = "STUB: not implemented"; return }
 
-// Set stores the key-value pair.
-func (m Metadata) Set(key string, value string) {
-	if key == "" || value == "" {
-		return
-	}
-	m[strings.ToLower(key)] = []string{value}
-}
+func (m Metadata) Range(f func(k string, v []string) bool) { _ = "STUB: not implemented"; return }
 
-// Range iterate over element in metadata.
-func (m Metadata) Range(f func(k string, v []string) bool) {
-	for k, v := range m {
-		if !f(k, v) {
-			break
-		}
-	}
-}
+func (m Metadata) Values(key string) []string { _ = "STUB: not implemented"; return nil }
 
-// Values returns a slice of values associated with the passed key.
-func (m Metadata) Values(key string) []string {
-	return m[strings.ToLower(key)]
-}
-
-// Clone returns a deep copy of Metadata
-func (m Metadata) Clone() Metadata {
-	md := make(Metadata, len(m))
-	for k, v := range m {
-		md[k] = slices.Clone(v)
-	}
-	return md
-}
+func (m Metadata) Clone() Metadata { _ = "STUB: not implemented"; return *new(Metadata) }
 
 type serverMetadataKey struct{}
 
-// NewServerContext creates a new context with client md attached.
 func NewServerContext(ctx context.Context, md Metadata) context.Context {
-	return context.WithValue(ctx, serverMetadataKey{}, md)
+	_ = "STUB: not implemented"
+	return *new(context.Context)
 }
 
-// FromServerContext returns the server metadata in ctx if it exists.
 func FromServerContext(ctx context.Context) (Metadata, bool) {
-	md, ok := ctx.Value(serverMetadataKey{}).(Metadata)
-	return md, ok
+	_ = "STUB: not implemented"
+	return *new(Metadata), false
 }
 
 type clientMetadataKey struct{}
 
-// NewClientContext creates a new context with client md attached.
 func NewClientContext(ctx context.Context, md Metadata) context.Context {
-	return context.WithValue(ctx, clientMetadataKey{}, md)
+	_ = "STUB: not implemented"
+	return *new(context.Context)
 }
 
-// FromClientContext returns the client metadata in ctx if it exists.
 func FromClientContext(ctx context.Context) (Metadata, bool) {
-	md, ok := ctx.Value(clientMetadataKey{}).(Metadata)
-	return md, ok
+	_ = "STUB: not implemented"
+	return *new(Metadata), false
 }
 
-// AppendToClientContext returns a new context with the provided kv merged
-// with any existing metadata in the context.
 func AppendToClientContext(ctx context.Context, kv ...string) context.Context {
-	if len(kv)%2 == 1 {
-		panic(fmt.Sprintf("metadata: AppendToClientContext got an odd number of input pairs for metadata: %d", len(kv)))
-	}
-	md, _ := FromClientContext(ctx)
-	md = md.Clone()
-	for i := 0; i < len(kv); i += 2 {
-		md.Set(kv[i], kv[i+1])
-	}
-	return NewClientContext(ctx, md)
+	_ = "STUB: not implemented"
+	return *new(context.Context)
 }
 
-// MergeToClientContext merge new metadata into ctx.
 func MergeToClientContext(ctx context.Context, cmd Metadata) context.Context {
-	md, _ := FromClientContext(ctx)
-	md = md.Clone()
-	for k, v := range cmd {
-		md[k] = v
-	}
-	return NewClientContext(ctx, md)
+	_ = "STUB: not implemented"
+	return *new(context.Context)
 }

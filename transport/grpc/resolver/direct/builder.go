@@ -1,8 +1,6 @@
 package direct
 
 import (
-	"strings"
-
 	"google.golang.org/grpc/resolver"
 )
 
@@ -14,29 +12,11 @@ func init() {
 
 type directBuilder struct{}
 
-// NewBuilder creates a directBuilder which is used to factory direct resolvers.
-// example:
-//
-//	direct://<authority>/127.0.0.1:9000,127.0.0.2:9000
-func NewBuilder() resolver.Builder {
-	return &directBuilder{}
-}
+func NewBuilder() resolver.Builder { _ = "STUB: not implemented"; return *new(resolver.Builder) }
 
 func (d *directBuilder) Build(target resolver.Target, cc resolver.ClientConn, _ resolver.BuildOptions) (resolver.Resolver, error) {
-	parts := strings.Split(strings.TrimPrefix(target.URL.Path, "/"), ",")
-	addrs := make([]resolver.Address, 0, len(parts))
-	for _, addr := range parts {
-		addrs = append(addrs, resolver.Address{Addr: addr})
-	}
-	err := cc.UpdateState(resolver.State{
-		Addresses: addrs,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return newDirectResolver(), nil
+	_ = "STUB: not implemented"
+	return *new(resolver.Resolver), nil
 }
 
-func (d *directBuilder) Scheme() string {
-	return name
-}
+func (d *directBuilder) Scheme() string { _ = "STUB: not implemented"; return "" }

@@ -16,36 +16,8 @@ type watcher struct {
 	cancel context.CancelFunc
 }
 
-func newWatcher(s *source) *watcher {
-	ctx, cancel := context.WithCancel(context.Background())
-	w := &watcher{
-		source: s,
-		ctx:    ctx,
-		cancel: cancel,
-	}
+func newWatcher(s *source) *watcher { _ = "STUB: not implemented"; return nil }
 
-	var opts []clientv3.OpOption
-	if s.options.prefix {
-		opts = append(opts, clientv3.WithPrefix())
-	}
-	w.ch = s.client.Watch(s.options.ctx, s.options.path, opts...)
+func (w *watcher) Next() ([]*config.KeyValue, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	return w
-}
-
-func (w *watcher) Next() ([]*config.KeyValue, error) {
-	select {
-	case resp := <-w.ch:
-		if err := resp.Err(); err != nil {
-			return nil, err
-		}
-		return w.source.Load()
-	case <-w.ctx.Done():
-		return nil, w.ctx.Err()
-	}
-}
-
-func (w *watcher) Stop() error {
-	w.cancel()
-	return nil
-}
+func (w *watcher) Stop() error { _ = "STUB: not implemented"; return nil }

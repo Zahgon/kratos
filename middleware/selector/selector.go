@@ -3,7 +3,6 @@ package selector
 import (
 	"context"
 	"regexp"
-	"strings"
 
 	"github.com/go-kratos/kratos/v3/middleware"
 	"github.com/go-kratos/kratos/v3/transport"
@@ -15,17 +14,15 @@ type (
 )
 
 var (
-	// serverTransporter is get server transport.Transporter from ctx
 	serverTransporter transporter = func(ctx context.Context) (transport.Transporter, bool) {
 		return transport.FromServerContext(ctx)
 	}
-	// clientTransporter is get client transport.Transporter from ctx
+
 	clientTransporter transporter = func(ctx context.Context) (transport.Transporter, bool) {
 		return transport.FromClientContext(ctx)
 	}
 )
 
-// Builder is a selector builder
 type Builder struct {
 	client bool
 
@@ -38,106 +35,33 @@ type Builder struct {
 	ms []middleware.Middleware
 }
 
-// Server selector middleware
-func Server(ms ...middleware.Middleware) *Builder {
-	return &Builder{ms: ms}
-}
+func Server(ms ...middleware.Middleware) *Builder { _ = "STUB: not implemented"; return nil }
 
-// Client selector middleware
-func Client(ms ...middleware.Middleware) *Builder {
-	return &Builder{client: true, ms: ms}
-}
+func Client(ms ...middleware.Middleware) *Builder { _ = "STUB: not implemented"; return nil }
 
-// Prefix is with Builder's prefix
-func (b *Builder) Prefix(prefix ...string) *Builder {
-	b.prefix = prefix
-	return b
-}
+func (b *Builder) Prefix(prefix ...string) *Builder { _ = "STUB: not implemented"; return nil }
 
-// Regex is with Builder's regex
-func (b *Builder) Regex(regex ...string) *Builder {
-	b.regex = regex
-	return b
-}
+func (b *Builder) Regex(regex ...string) *Builder { _ = "STUB: not implemented"; return nil }
 
-// Path is with Builder's path
-func (b *Builder) Path(path ...string) *Builder {
-	b.path = path
-	return b
-}
+func (b *Builder) Path(path ...string) *Builder { _ = "STUB: not implemented"; return nil }
 
-// Match is with Builder's match
-func (b *Builder) Match(fn MatchFunc) *Builder {
-	b.match = fn
-	return b
-}
+func (b *Builder) Match(fn MatchFunc) *Builder { _ = "STUB: not implemented"; return nil }
 
-// Build is Builder's Build, for example: Server().Path(m1,m2).Build()
 func (b *Builder) Build() middleware.Middleware {
-	var transporter func(ctx context.Context) (transport.Transporter, bool)
-	if b.client {
-		transporter = clientTransporter
-	} else {
-		transporter = serverTransporter
-	}
-	b.compiled = make([]*regexp.Regexp, 0, len(b.regex))
-	for _, regex := range b.regex {
-		if r, err := regexp.Compile(regex); err == nil {
-			b.compiled = append(b.compiled, r)
-		}
-	}
-	return selector(transporter, b.matches, b.ms...)
+	_ = "STUB: not implemented"
+	return *new(middleware.Middleware)
 }
 
-// matches is match operation compliance Builder
 func (b *Builder) matches(ctx context.Context, transporter transporter) bool {
-	info, ok := transporter(ctx)
-	if !ok {
-		return false
-	}
-
-	operation := info.Operation()
-	for _, prefix := range b.prefix {
-		if prefixMatch(prefix, operation) {
-			return true
-		}
-	}
-	for _, r := range b.compiled {
-		if r.FindString(operation) == operation {
-			return true
-		}
-	}
-	for _, path := range b.path {
-		if pathMatch(path, operation) {
-			return true
-		}
-	}
-
-	if b.match != nil {
-		if b.match(ctx, operation) {
-			return true
-		}
-	}
-
+	_ = "STUB: not implemented"
 	return false
 }
 
-// selector middleware
 func selector(transporter transporter, match func(context.Context, transporter) bool, ms ...middleware.Middleware) middleware.Middleware {
-	return func(handler middleware.Handler) middleware.Handler {
-		return func(ctx context.Context, req any) (reply any, err error) {
-			if !match(ctx, transporter) {
-				return handler(ctx, req)
-			}
-			return middleware.Chain(ms...)(handler)(ctx, req)
-		}
-	}
+	_ = "STUB: not implemented"
+	return *new(middleware.Middleware)
 }
 
-func pathMatch(path string, operation string) bool {
-	return path == operation
-}
+func pathMatch(path string, operation string) bool { _ = "STUB: not implemented"; return false }
 
-func prefixMatch(prefix string, operation string) bool {
-	return strings.HasPrefix(operation, prefix)
-}
+func prefixMatch(prefix string, operation string) bool { _ = "STUB: not implemented"; return false }

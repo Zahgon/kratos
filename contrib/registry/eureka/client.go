@@ -1,15 +1,10 @@
 package eureka
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"fmt"
 	"io"
-	"math/rand/v2"
 	"net"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 )
@@ -37,7 +32,6 @@ type Endpoint struct {
 	MetaData       map[string]string
 }
 
-// ApplicationsRootResponse for /eureka/apps
 type ApplicationsRootResponse struct {
 	ApplicationsResponse `json:"applications"`
 }
@@ -101,23 +95,19 @@ type APIInterface interface {
 
 type ClientOption func(e *Client)
 
-func WithMaxRetry(maxRetry int) ClientOption {
-	return func(e *Client) { e.maxRetry = maxRetry }
-}
+func WithMaxRetry(maxRetry int) ClientOption { _ = "STUB: not implemented"; return *new(ClientOption) }
 
 func WithHeartbeatInterval(interval time.Duration) ClientOption {
-	return func(e *Client) {
-		e.heartbeatInterval = interval
-	}
+	_ = "STUB: not implemented"
+	return *new(ClientOption)
 }
 
 func WithClientContext(ctx context.Context) ClientOption {
-	return func(e *Client) { e.ctx = ctx }
+	_ = "STUB: not implemented"
+	return *new(ClientOption)
 }
 
-func WithNamespace(path string) ClientOption {
-	return func(e *Client) { e.eurekaPath = path }
-}
+func WithNamespace(path string) ClientOption { _ = "STUB: not implemented"; return *new(ClientOption) }
 
 type Client struct {
 	ctx               context.Context
@@ -142,225 +132,87 @@ var clientTransport = &http.Transport{
 	ResponseHeaderTimeout: 10 * time.Second,
 }
 
-func NewClient(urls []string, opts ...ClientOption) *Client {
-	e := &Client{
-		ctx:               context.Background(),
-		urls:              urls,
-		eurekaPath:        "eureka/v2",
-		maxRetry:          len(urls),
-		heartbeatInterval: heartbeatTime,
-		client:            &http.Client{Transport: clientTransport, Timeout: httpTimeout},
-		keepalive:         make(map[string]chan struct{}),
-	}
-
-	for _, o := range opts {
-		o(e)
-	}
-
-	return e
-}
+func NewClient(urls []string, opts ...ClientOption) *Client { _ = "STUB: not implemented"; return nil }
 
 func (e *Client) FetchApps(ctx context.Context) []Application {
-	var m ApplicationsRootResponse
-	if err := e.do(ctx, http.MethodGet, []string{appsPath}, nil, &m); err != nil {
-		return nil
-	}
-
-	return m.Applications
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (e *Client) FetchAppInstances(ctx context.Context, appID string) (m Application, err error) {
-	err = e.do(ctx, http.MethodGet, []string{appsPath, appID}, nil, &m)
-	return
+	_ = "STUB: not implemented"
+	return *new(Application), nil
 }
 
 func (e *Client) FetchAppUpInstances(ctx context.Context, appID string) []Instance {
-	app, err := e.FetchAppInstances(ctx, appID)
-	if err != nil {
-		return nil
-	}
-	return e.filterUp(app)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (e *Client) FetchAppInstance(ctx context.Context, appID string, instanceID string) (m Instance, err error) {
-	err = e.do(ctx, http.MethodGet, []string{appsPath, appID, instanceID}, nil, &m)
-	return
+	_ = "STUB: not implemented"
+	return *new(Instance), nil
 }
 
 func (e *Client) FetchInstance(ctx context.Context, instanceID string) (m Instance, err error) {
-	err = e.do(ctx, http.MethodGet, []string{"instances", instanceID}, nil, &m)
-	return
+	_ = "STUB: not implemented"
+	return *new(Instance), nil
 }
 
 func (e *Client) Out(ctx context.Context, appID, instanceID string) error {
-	return e.do(ctx, http.MethodPut, []string{appsPath, appID, instanceID, fmt.Sprintf("status?value=%s", statusOutOfService)}, nil, nil)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (e *Client) Down(ctx context.Context, appID, instanceID string) error {
-	return e.do(ctx, http.MethodPut, []string{appsPath, appID, instanceID, fmt.Sprintf("status?value=%s", statusDown)}, nil, nil)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (e *Client) FetchAllUpInstances(ctx context.Context) []Instance {
-	return e.filterUp(e.FetchApps(ctx)...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (e *Client) Register(ctx context.Context, ep Endpoint) error {
-	return e.registerEndpoint(ctx, ep)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (e *Client) Deregister(ctx context.Context, appID, instanceID string) error {
-	if err := e.do(ctx, http.MethodDelete, []string{appsPath, appID, instanceID}, nil, nil); err != nil {
-		return err
-	}
-	go e.cancelHeartbeat(appID)
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (e *Client) registerEndpoint(ctx context.Context, ep Endpoint) error {
-	instance := RequestInstance{
-		Instance: Instance{
-			InstanceID: ep.InstanceID,
-			HostName:   ep.AppID,
-			Port: Port{
-				Port:    ep.Port,
-				Enabled: "true",
-			},
-			App:        ep.AppID,
-			IPAddr:     ep.IP,
-			VipAddress: ep.AppID,
-			Status:     statusUp,
-			SecurePort: Port{
-				Port:    ep.SecurePort,
-				Enabled: "false",
-			},
-			HomePageURL:    ep.HomePageURL,
-			StatusPageURL:  ep.StatusPageURL,
-			HealthCheckURL: ep.HealthCheckURL,
-			DataCenterInfo: DataCenterInfo{
-				Name:  "MyOwn",
-				Class: "com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo",
-			},
-			Metadata: ep.MetaData,
-		},
-	}
-
-	body, err := json.Marshal(instance)
-	if err != nil {
-		return err
-	}
-	return e.do(ctx, http.MethodPost, []string{appsPath, ep.AppID}, bytes.NewReader(body), nil)
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func (e *Client) Heartbeat(ep Endpoint) {
-	e.lock.Lock()
-	e.keepalive[ep.AppID] = make(chan struct{})
-	e.lock.Unlock()
+func (e *Client) Heartbeat(ep Endpoint) { _ = "STUB: not implemented"; return }
 
-	ticker := time.NewTicker(e.heartbeatInterval)
-	defer ticker.Stop()
-	retryCount := 0
-	for {
-		select {
-		case <-e.ctx.Done():
-			return
-		case <-e.keepalive[ep.AppID]:
-			return
-		case <-ticker.C:
-			if err := e.do(e.ctx, http.MethodPut, []string{appsPath, ep.AppID, ep.InstanceID}, nil, nil); err != nil {
-				if retryCount++; retryCount > heartbeatRetry {
-					_ = e.registerEndpoint(e.ctx, ep)
-					retryCount = 0
-				}
-			}
-		}
-	}
-}
-
-func (e *Client) cancelHeartbeat(appID string) {
-	e.lock.Lock()
-	defer e.lock.Unlock()
-	if ch, ok := e.keepalive[appID]; ok {
-		ch <- struct{}{}
-	}
-}
+func (e *Client) cancelHeartbeat(appID string) { _ = "STUB: not implemented"; return }
 
 func (e *Client) filterUp(apps ...Application) (res []Instance) {
-	for _, app := range apps {
-		for _, ins := range app.Instance {
-			if ins.Status == statusUp {
-				res = append(res, ins)
-			}
-		}
-	}
-
-	return
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func (e *Client) pickServer(currentTimes int) string {
-	return e.urls[currentTimes%e.maxRetry]
-}
+func (e *Client) pickServer(currentTimes int) string { _ = "STUB: not implemented"; return "" }
 
-func (e *Client) shuffle() {
-	rand.New(rand.NewPCG(uint64(time.Now().UnixNano()), 0)).
-		Shuffle(len(e.urls), func(i, j int) {
-			e.urls[i], e.urls[j] = e.urls[j], e.urls[i]
-		})
-}
+func (e *Client) shuffle() { _ = "STUB: not implemented"; return }
 
 func (e *Client) buildAPI(currentTimes int, params ...string) string {
-	if currentTimes == 0 {
-		e.shuffle()
-	}
-	server := e.pickServer(currentTimes)
-	params = append([]string{server, e.eurekaPath}, params...)
-	return strings.Join(params, "/")
+	_ = "STUB: not implemented"
+	return ""
 }
 
 func (e *Client) request(ctx context.Context, method string, params []string, input io.Reader, output any, i int) (bool, error) {
-	request, err := http.NewRequestWithContext(ctx, method, e.buildAPI(i, params...), input)
-	if err != nil {
-		return false, err
-	}
-	request.Header.Add("User-Agent", "go-eureka-client")
-	request.Header.Add("Accept", "application/json;charset=UTF-8")
-	request.Header.Add("Content-Type", "application/json;charset=UTF-8")
-	resp, err := e.client.Do(request)
-	if err != nil {
-		return true, err
-	}
-	defer func() {
-		_, _ = io.Copy(io.Discard, resp.Body)
-		_ = resp.Body.Close()
-	}()
-
-	if output != nil && resp.StatusCode/100 == 2 {
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return false, err
-		}
-		err = json.Unmarshal(data, output)
-		if err != nil {
-			return false, err
-		}
-	}
-
-	if resp.StatusCode >= http.StatusBadRequest {
-		return false, fmt.Errorf("response Error %d", resp.StatusCode)
-	}
-
+	_ = "STUB: not implemented"
 	return false, nil
 }
 
 func (e *Client) do(ctx context.Context, method string, params []string, input io.Reader, output any) error {
-	for i := 0; i < e.maxRetry; i++ {
-		retry, err := e.request(ctx, method, params, input, output, i)
-		if retry {
-			continue
-		}
-		if err != nil {
-			return err
-		}
-		return nil
-	}
-	return fmt.Errorf("retry after %d times", e.maxRetry)
+	_ = "STUB: not implemented"
+	return nil
 }

@@ -6,63 +6,35 @@ import (
 
 	"go.opentelemetry.io/contrib/bridges/otelslog"
 	otellog "go.opentelemetry.io/otel/log"
-	"go.opentelemetry.io/otel/trace"
 )
 
-// Option configures the OpenTelemetry slog bridge.
 type Option func(*options)
 
 type options struct {
 	otel []otelslog.Option
 }
 
-// WithLoggerProvider configures the OpenTelemetry LoggerProvider.
 func WithLoggerProvider(provider otellog.LoggerProvider) Option {
-	return func(c *options) {
-		c.otel = append(c.otel, otelslog.WithLoggerProvider(provider))
-	}
+	_ = "STUB: not implemented"
+	return *new(Option)
 }
 
-// WithSchemaURL configures the semantic convention schema URL.
-func WithSchemaURL(schemaURL string) Option {
-	return func(c *options) {
-		c.otel = append(c.otel, otelslog.WithSchemaURL(schemaURL))
-	}
-}
+func WithSchemaURL(schemaURL string) Option { _ = "STUB: not implemented"; return *new(Option) }
 
-// WithSource configures whether source locations are emitted.
-func WithSource(source bool) Option {
-	return func(c *options) {
-		c.otel = append(c.otel, otelslog.WithSource(source))
-	}
-}
+func WithSource(source bool) Option { _ = "STUB: not implemented"; return *new(Option) }
 
-// WithVersion configures the instrumentation version.
-func WithVersion(version string) Option {
-	return func(c *options) {
-		c.otel = append(c.otel, otelslog.WithVersion(version))
-	}
-}
+func WithVersion(version string) Option { _ = "STUB: not implemented"; return *new(Option) }
 
-// NewHandler returns a slog handler that sends records to OpenTelemetry Logs
-// and adds trace correlation attrs from the log context.
 func NewHandler(name string, opts ...Option) slog.Handler {
-	cfg := newOptions(opts)
-	return newHandler(name, cfg)
+	_ = "STUB: not implemented"
+	return *new(slog.Handler)
 }
 
-func newOptions(opts []Option) options {
-	var cfg options
-	for _, opt := range opts {
-		if opt != nil {
-			opt(&cfg)
-		}
-	}
-	return cfg
-}
+func newOptions(opts []Option) options { _ = "STUB: not implemented"; return *new(options) }
 
 func newHandler(name string, cfg options) slog.Handler {
-	return &traceHandler{next: otelslog.NewHandler(name, cfg.otel...)}
+	_ = "STUB: not implemented"
+	return *new(slog.Handler)
 }
 
 type traceHandler struct {
@@ -70,34 +42,23 @@ type traceHandler struct {
 }
 
 func (h *traceHandler) Enabled(ctx context.Context, level slog.Level) bool {
-	return h.next.Enabled(ctx, level)
+	_ = "STUB: not implemented"
+	return false
 }
 
 func (h *traceHandler) Handle(ctx context.Context, record slog.Record) error {
-	attrs := traceAttrs(ctx)
-	if len(attrs) > 0 {
-		record = record.Clone()
-		record.AddAttrs(attrs...)
-	}
-	return h.next.Handle(ctx, record)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (h *traceHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
-	return &traceHandler{next: h.next.WithAttrs(attrs)}
+	_ = "STUB: not implemented"
+	return *new(slog.Handler)
 }
 
 func (h *traceHandler) WithGroup(name string) slog.Handler {
-	return &traceHandler{next: h.next.WithGroup(name)}
+	_ = "STUB: not implemented"
+	return *new(slog.Handler)
 }
 
-func traceAttrs(ctx context.Context) []slog.Attr {
-	span := trace.SpanContextFromContext(ctx)
-	if !span.IsValid() {
-		return nil
-	}
-	return []slog.Attr{
-		slog.String("trace_id", span.TraceID().String()),
-		slog.String("span_id", span.SpanID().String()),
-		slog.String("trace_flags", span.TraceFlags().String()),
-	}
-}
+func traceAttrs(ctx context.Context) []slog.Attr { _ = "STUB: not implemented"; return nil }

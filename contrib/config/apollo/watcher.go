@@ -2,13 +2,10 @@ package apollo
 
 import (
 	"context"
-	"strings"
 
 	"github.com/apolloconfig/agollo/v4/storage"
 
 	"github.com/go-kratos/kratos/v3/config"
-	"github.com/go-kratos/kratos/v3/encoding"
-	"github.com/go-kratos/kratos/v3/log"
 )
 
 type watcher struct {
@@ -24,85 +21,25 @@ type customChangeListener struct {
 }
 
 func (c *customChangeListener) onChange(namespace string, changes map[string]*storage.ConfigChange) []*config.KeyValue {
-	kv := make([]*config.KeyValue, 0, 2)
-	if strings.Contains(namespace, ".") && !strings.HasSuffix(namespace, "."+properties) &&
-		(format(namespace) == yaml || format(namespace) == yml || format(namespace) == json) {
-		if value, ok := changes[contentKey]; ok {
-			if s, ok := value.NewValue.(string); ok {
-				kv = append(kv, &config.KeyValue{
-					Key:    namespace,
-					Value:  []byte(s),
-					Format: format(namespace),
-				})
-
-				return kv
-			}
-		}
-	}
-
-	next := make(map[string]any)
-
-	for key, change := range changes {
-		resolve(genKey(namespace, key), change.NewValue, next)
-	}
-
-	f := format(namespace)
-	codec := encoding.GetCodec(f)
-	val, err := codec.Marshal(next)
-	if err != nil {
-		log.Warn("apollo could not handle namespace", "namespace", namespace, "error", err)
-		return nil
-	}
-	kv = append(kv, &config.KeyValue{
-		Key:    namespace,
-		Value:  val,
-		Format: f,
-	})
-
-	return kv
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (c *customChangeListener) OnChange(changeEvent *storage.ChangeEvent) {
-	change := c.onChange(changeEvent.Namespace, changeEvent.Changes)
-	if len(change) == 0 {
-		return
-	}
-
-	c.in <- change
+	_ = "STUB: not implemented"
+	return
 }
 
-func (c *customChangeListener) OnNewestChange(_ *storage.FullChangeEvent) {}
+func (c *customChangeListener) OnNewestChange(_ *storage.FullChangeEvent) {
+	_ = "STUB: not implemented"
+	return
+}
 
 func newWatcher(a *apollo) (config.Watcher, error) {
-	changeCh := make(chan []*config.KeyValue)
-	listener := &customChangeListener{in: changeCh, apollo: a}
-	a.client.AddChangeListener(listener)
-
-	ctx, cancel := context.WithCancel(context.Background())
-	return &watcher{
-		out: changeCh,
-
-		ctx: ctx,
-		cancelFn: func() {
-			a.client.RemoveChangeListener(listener)
-			cancel()
-		},
-	}, nil
+	_ = "STUB: not implemented"
+	return *new(config.Watcher), nil
 }
 
-// Next will be blocked until the Stop method is called
-func (w *watcher) Next() ([]*config.KeyValue, error) {
-	select {
-	case kv := <-w.out:
-		return kv, nil
-	case <-w.ctx.Done():
-		return nil, w.ctx.Err()
-	}
-}
+func (w *watcher) Next() ([]*config.KeyValue, error) { _ = "STUB: not implemented"; return nil, nil }
 
-func (w *watcher) Stop() error {
-	if w.cancelFn != nil {
-		w.cancelFn()
-	}
-	return nil
-}
+func (w *watcher) Stop() error { _ = "STUB: not implemented"; return nil }

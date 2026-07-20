@@ -1,18 +1,12 @@
 package polaris
 
 import (
-	"context"
-	"path/filepath"
-	"strings"
-
 	"github.com/polarismesh/polaris-go"
 	"github.com/polarismesh/polaris-go/pkg/model"
 
 	"github.com/go-kratos/kratos/v3/config"
-	"github.com/go-kratos/kratos/v3/log"
 )
 
-// ConfigOption is polaris config option.
 type ConfigOption func(o *configOptions)
 
 type configOptions struct {
@@ -21,11 +15,9 @@ type configOptions struct {
 	configFile []polaris.ConfigFile
 }
 
-// WithConfigFile with polaris config file
 func WithConfigFile(file ...File) ConfigOption {
-	return func(o *configOptions) {
-		o.files = file
-	}
+	_ = "STUB: not implemented"
+	return *new(ConfigOption)
 }
 
 type File struct {
@@ -38,34 +30,11 @@ type source struct {
 	options *configOptions
 }
 
-// Load return the config values
-func (s *source) Load() ([]*config.KeyValue, error) {
-	kvs := make([]*config.KeyValue, 0, len(s.options.files))
-	for _, file := range s.options.files {
-		configFile, err := s.client.FetchConfigFile(&polaris.GetConfigFileRequest{
-			GetConfigFileRequest: &model.GetConfigFileRequest{
-				Namespace: s.options.namespace,
-				FileGroup: file.Group,
-				FileName:  file.Name,
-				Subscribe: true,
-			},
-		})
-		if err != nil {
-			return nil, err
-		}
-		s.options.configFile = append(s.options.configFile, configFile)
-		kvs = append(kvs, &config.KeyValue{
-			Key:    file.Name,
-			Value:  []byte(configFile.GetContent()),
-			Format: strings.TrimPrefix(filepath.Ext(file.Name), "."),
-		})
-	}
-	return kvs, nil
-}
+func (s *source) Load() ([]*config.KeyValue, error) { _ = "STUB: not implemented"; return nil, nil }
 
-// Watch return the watcher
 func (s *source) Watch() (config.Watcher, error) {
-	return newConfigWatcher(s.options.configFile), nil
+	_ = "STUB: not implemented"
+	return *new(config.Watcher), nil
 }
 
 type ConfigWatcher struct {
@@ -74,54 +43,18 @@ type ConfigWatcher struct {
 }
 
 func receive(event chan model.ConfigFileChangeEvent) func(m model.ConfigFileChangeEvent) {
-	return func(m model.ConfigFileChangeEvent) {
-		defer func() {
-			if err := recover(); err != nil {
-				log.Error("panic recovered", "err", err)
-			}
-		}()
-		event <- m
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func newConfigWatcher(configFile []polaris.ConfigFile) *ConfigWatcher {
-	w := &ConfigWatcher{
-		event: make(chan model.ConfigFileChangeEvent, len(configFile)),
-	}
-	for _, file := range configFile {
-		w.cfg = append(w.cfg, &config.KeyValue{
-			Key:    file.GetFileName(),
-			Value:  []byte(file.GetContent()),
-			Format: strings.TrimPrefix(filepath.Ext(file.GetFileName()), "."),
-		})
-	}
-	for _, file := range configFile {
-		file.AddChangeListener(receive(w.event))
-	}
-	return w
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (w *ConfigWatcher) Next() ([]*config.KeyValue, error) {
-	if event, ok := <-w.event; ok {
-		m := make(map[string]*config.KeyValue)
-		for _, file := range w.cfg {
-			m[file.Key] = file
-		}
-		m[event.ConfigFileMetadata.GetFileName()] = &config.KeyValue{
-			Key:    event.ConfigFileMetadata.GetFileName(),
-			Value:  []byte(event.NewValue),
-			Format: strings.TrimPrefix(filepath.Ext(event.ConfigFileMetadata.GetFileName()), "."),
-		}
-		w.cfg = make([]*config.KeyValue, 0, len(m))
-		for _, kv := range m {
-			w.cfg = append(w.cfg, kv)
-		}
-		return w.cfg, nil
-	}
-	return nil, context.Canceled
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-func (w *ConfigWatcher) Stop() error {
-	close(w.event)
-	return nil
-}
+func (w *ConfigWatcher) Stop() error { _ = "STUB: not implemented"; return nil }

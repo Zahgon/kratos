@@ -2,17 +2,11 @@ package sentry
 
 import (
 	"context"
-	"net"
-	"os"
-	"strings"
 	"time"
 
 	"github.com/getsentry/sentry-go"
 
 	"github.com/go-kratos/kratos/v3/middleware"
-	"github.com/go-kratos/kratos/v3/transport"
-	"github.com/go-kratos/kratos/v3/transport/grpc"
-	"github.com/go-kratos/kratos/v3/transport/http"
 )
 
 type ctxKey struct{}
@@ -27,125 +21,32 @@ type options struct {
 	contextTags     func(context.Context) map[string]string
 }
 
-// WithRepanic repanic configures whether Sentry should repanic after recovery, in most cases it should be set to true.
-func WithRepanic(repanic bool) Option {
-	return func(opts *options) {
-		opts.repanic = repanic
-	}
-}
+func WithRepanic(repanic bool) Option { _ = "STUB: not implemented"; return *new(Option) }
 
-// WithWaitForDelivery waitForDelivery configures whether you want to block the request before moving forward with the response.
 func WithWaitForDelivery(waitForDelivery bool) Option {
-	return func(opts *options) {
-		opts.waitForDelivery = waitForDelivery
-	}
+	_ = "STUB: not implemented"
+	return *new(Option)
 }
 
-// WithTimeout timeout for the event delivery requests.
-func WithTimeout(timeout time.Duration) Option {
-	return func(opts *options) {
-		opts.timeout = timeout
-	}
-}
+func WithTimeout(timeout time.Duration) Option { _ = "STUB: not implemented"; return *new(Option) }
 
-// WithTags configures global tags.
-func WithTags(kvs map[string]string) Option {
-	return func(opts *options) {
-		opts.tags = kvs
-	}
-}
+func WithTags(kvs map[string]string) Option { _ = "STUB: not implemented"; return *new(Option) }
 
-// WithContextTags configures tags resolved from each request context.
 func WithContextTags(fn func(context.Context) map[string]string) Option {
-	return func(opts *options) {
-		opts.contextTags = fn
-	}
+	_ = "STUB: not implemented"
+	return *new(Option)
 }
 
-// Server returns a new server middleware for Sentry.
 func Server(opts ...Option) middleware.Middleware {
-	conf := options{repanic: true}
-	for _, o := range opts {
-		o(&conf)
-	}
-	if conf.timeout == 0 {
-		conf.timeout = 2 * time.Second
-	}
-	return func(handler middleware.Handler) middleware.Handler {
-		return func(ctx context.Context, req any) (reply any, err error) {
-			hub := GetHubFromContext(ctx)
-			scope := hub.Scope()
-
-			for k, v := range conf.tags {
-				scope.SetTag(k, v)
-			}
-			if conf.contextTags != nil {
-				for k, v := range conf.contextTags(ctx) {
-					scope.SetTag(k, v)
-				}
-			}
-
-			if tr, ok := transport.FromServerContext(ctx); ok {
-				switch tr.Kind() {
-				case transport.KindGRPC:
-					gtr := tr.(*grpc.Transport)
-					scope.SetContext("gRPC", map[string]any{
-						"endpoint":  gtr.Endpoint(),
-						"operation": gtr.Operation(),
-					})
-					headers := make(map[string]any)
-					for _, k := range gtr.RequestHeader().Keys() {
-						headers[k] = gtr.RequestHeader().Get(k)
-					}
-					scope.SetContext("Headers", headers)
-				case transport.KindHTTP:
-					htr := tr.(*http.Transport)
-					r := htr.Request()
-					scope.SetRequest(r)
-				}
-			}
-
-			ctx = context.WithValue(ctx, ctxKey{}, hub)
-			defer recoverWithSentry(ctx, conf, hub, req)
-			return handler(ctx, req)
-		}
-	}
+	_ = "STUB: not implemented"
+	return *new(middleware.Middleware)
 }
 
 func recoverWithSentry(ctx context.Context, opts options, hub *sentry.Hub, req any) {
-	if err := recover(); err != nil {
-		if !isBrokenPipeError(err) {
-			eventID := hub.RecoverWithContext(
-				context.WithValue(ctx, sentry.RequestContextKey, req),
-				err,
-			)
-			if eventID != nil && opts.waitForDelivery {
-				hub.Flush(opts.timeout)
-			}
-		}
-		if opts.repanic {
-			panic(err)
-		}
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
-func isBrokenPipeError(err any) bool {
-	if netErr, ok := err.(*net.OpError); ok {
-		if sysErr, ok := netErr.Err.(*os.SyscallError); ok {
-			if strings.Contains(strings.ToLower(sysErr.Error()), "broken pipe") ||
-				strings.Contains(strings.ToLower(sysErr.Error()), "connection reset by peer") {
-				return true
-			}
-		}
-	}
-	return false
-}
+func isBrokenPipeError(err any) bool { _ = "STUB: not implemented"; return false }
 
-// GetHubFromContext retrieves attached *sentry.Hub instance from context or sentry.
-// You can use this hub for extra information reporting
-func GetHubFromContext(ctx context.Context) *sentry.Hub {
-	if hub, ok := ctx.Value(ctxKey{}).(*sentry.Hub); ok {
-		return hub
-	}
-	return sentry.CurrentHub().Clone()
-}
+func GetHubFromContext(ctx context.Context) *sentry.Hub { _ = "STUB: not implemented"; return nil }
