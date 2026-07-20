@@ -38,3 +38,6 @@ bin/
 .vscode/
 .idea/
 *.swp
+
+.aider*
+logs/
