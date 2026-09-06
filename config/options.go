@@ -1,24 +1,15 @@
 package config
 
 import (
-	"fmt"
 	"regexp"
-	"strconv"
-	"strings"
-
-	"github.com/go-kratos/kratos/v3/encoding"
 )
 
-// Decoder is config decoder.
 type Decoder func(*KeyValue, map[string]any) error
 
-// Resolver resolve placeholder in config.
 type Resolver func(map[string]any) error
 
-// Merge is config merge func.
 type Merge func(dst, src any) error
 
-// Option is config option.
 type Option func(*options)
 
 type options struct {
@@ -33,171 +24,47 @@ const (
 	boolFalseValue = "false"
 )
 
-// WithSource with config source.
-func WithSource(s ...Source) Option {
-	return func(o *options) {
-		o.sources = s
-	}
-}
+func WithSource(s ...Source) Option { _ = "STUB: not implemented"; return *new(Option) }
 
-// WithDecoder with config decoder.
-// DefaultDecoder behavior:
-// If KeyValue.Format is non-empty, then KeyValue.Value will be deserialized into map[string]interface{}
-// and stored in the config cache(map[string]interface{})
-// if KeyValue.Format is empty,{KeyValue.Key : KeyValue.Value} will be stored in config cache(map[string]interface{})
-func WithDecoder(d Decoder) Option {
-	return func(o *options) {
-		o.decoder = d
-	}
-}
+func WithDecoder(d Decoder) Option { _ = "STUB: not implemented"; return *new(Option) }
 
-// WithResolveActualTypes with config resolver.
-// bool input will enable conversion of config to data types
 func WithResolveActualTypes(enableConvertToType bool) Option {
-	return func(o *options) {
-		o.resolver = newActualTypesResolver(enableConvertToType)
-	}
+	_ = "STUB: not implemented"
+	return *new(Option)
 }
 
-// WithResolver with config resolver.
-func WithResolver(r Resolver) Option {
-	return func(o *options) {
-		o.resolver = r
-	}
-}
+func WithResolver(r Resolver) Option { _ = "STUB: not implemented"; return *new(Option) }
 
-// WithMergeFunc with config merge func.
-func WithMergeFunc(m Merge) Option {
-	return func(o *options) {
-		o.merge = m
-	}
-}
+func WithMergeFunc(m Merge) Option { _ = "STUB: not implemented"; return *new(Option) }
 
-// defaultDecoder decode config from source KeyValue
-// to target map[string]interface{} using src.Format codec.
 func defaultDecoder(src *KeyValue, target map[string]any) error {
-	if src.Format == "" {
-		// expand key "aaa.bbb" into map[aaa]map[bbb]interface{}
-		keys := strings.Split(src.Key, ".")
-		for i, k := range keys {
-			if i == len(keys)-1 {
-				target[k] = src.Value
-			} else {
-				sub := make(map[string]any)
-				target[k] = sub
-				target = sub
-			}
-		}
-		return nil
-	}
-	if codec := encoding.GetCodec(src.Format); codec != nil {
-		return codec.Unmarshal(src.Value, &target)
-	}
-	return fmt.Errorf("unsupported key: %s format: %s", src.Key, src.Format)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func newActualTypesResolver(enableConvertToType bool) func(map[string]any) error {
-	return func(input map[string]any) error {
-		mapper := mapper(input)
-		return resolver(input, mapper, enableConvertToType)
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
-// defaultResolver resolve placeholder in map value,
-// placeholder format in ${key:default}.
-func defaultResolver(input map[string]any) error {
-	mapper := mapper(input)
-	return resolver(input, mapper, false)
-}
+func defaultResolver(input map[string]any) error { _ = "STUB: not implemented"; return nil }
 
 func resolver(input map[string]any, mapper func(name string) string, toType bool) error {
-	var resolve func(map[string]any) error
-	resolve = func(sub map[string]any) error {
-		for k, v := range sub {
-			switch vt := v.(type) {
-			case string:
-				sub[k] = expand(vt, mapper, toType)
-			case map[string]any:
-				if err := resolve(vt); err != nil {
-					return err
-				}
-			case []any:
-				for i, iface := range vt {
-					switch it := iface.(type) {
-					case string:
-						vt[i] = expand(it, mapper, toType)
-					case map[string]any:
-						if err := resolve(it); err != nil {
-							return err
-						}
-					}
-				}
-				sub[k] = vt
-			}
-		}
-		return nil
-	}
-	return resolve(input)
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func mapper(input map[string]any) func(name string) string {
-	mapper := func(name string) string {
-		args := strings.SplitN(strings.TrimSpace(name), ":", 2) //nolint:mnd
-		if v, has := readValue(input, args[0]); has {
-			s, _ := v.String()
-			return s
-		} else if len(args) > 1 { // default value
-			return args[1]
-		}
-		return ""
-	}
-	return mapper
-}
+func mapper(input map[string]any) func(name string) string { _ = "STUB: not implemented"; return nil }
 
-func convertToType(input string) any {
-	// Check if the input is a string with quotes
-	if strings.HasPrefix(input, "\"") && strings.HasSuffix(input, "\"") {
-		// Trim the quotes and return the string value
-		return strings.Trim(input, "\"")
-	}
+//nolint:mnd
 
-	// Try converting to bool
-	if input == boolTrueValue || input == boolFalseValue {
-		b, _ := strconv.ParseBool(input)
-		return b
-	}
+func convertToType(input string) any { _ = "STUB: not implemented"; return *new(any) }
 
-	// Try converting to float64
-	if strings.Contains(input, ".") {
-		if f, err := strconv.ParseFloat(input, 64); err == nil {
-			return f
-		}
-	}
-
-	// Try converting to int64
-	if i, err := strconv.ParseInt(input, 10, 64); err == nil {
-		return i
-	}
-
-	// Default to string if no other conversion succeeds
-	return input
-}
-
-// placeholderRegexp matches ${...} placeholders in config value
 var placeholderRegexp = regexp.MustCompile(`\${(.*?)}`)
 
 func expand(s string, mapping func(string) string, toType bool) any {
-	re := placeholderRegexp.FindAllStringSubmatch(s, -1)
-	var ct any
-	for _, i := range re {
-		if len(i) == 2 { //nolint:mnd
-			m := mapping(i[1])
-			if toType {
-				ct = convertToType(m)
-				return ct
-			}
-			s = strings.ReplaceAll(s, i[0], m)
-		}
-	}
-	return s
+	_ = "STUB: not implemented"
+	return *new(any)
 }
+
+//nolint:mnd

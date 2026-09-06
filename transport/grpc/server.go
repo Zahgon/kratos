@@ -8,16 +8,9 @@ import (
 	"time"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/admin"
-	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/health"
-	"google.golang.org/grpc/health/grpc_health_v1"
-	"google.golang.org/grpc/reflection"
 
-	"github.com/go-kratos/kratos/v3/internal/endpoint"
-	"github.com/go-kratos/kratos/v3/internal/host"
 	"github.com/go-kratos/kratos/v3/internal/matcher"
-	"github.com/go-kratos/kratos/v3/log"
 	"github.com/go-kratos/kratos/v3/middleware"
 	"github.com/go-kratos/kratos/v3/transport"
 )
@@ -27,100 +20,52 @@ var (
 	_ transport.Endpointer = (*Server)(nil)
 )
 
-// ServerOption is gRPC server option.
 type ServerOption func(o *Server)
 
-// Network with server network.
-func Network(network string) ServerOption {
-	return func(s *Server) {
-		s.network = network
-	}
-}
+func Network(network string) ServerOption { _ = "STUB: not implemented"; return *new(ServerOption) }
 
-// Address with server address.
-func Address(addr string) ServerOption {
-	return func(s *Server) {
-		s.address = addr
-	}
-}
+func Address(addr string) ServerOption { _ = "STUB: not implemented"; return *new(ServerOption) }
 
-// Endpoint with server address.
-func Endpoint(endpoint *url.URL) ServerOption {
-	return func(s *Server) {
-		s.endpoint = endpoint
-	}
-}
+func Endpoint(endpoint *url.URL) ServerOption { _ = "STUB: not implemented"; return *new(ServerOption) }
 
-// Timeout with server timeout.
 func Timeout(timeout time.Duration) ServerOption {
-	return func(s *Server) {
-		s.timeout = timeout
-	}
+	_ = "STUB: not implemented"
+	return *new(ServerOption)
 }
 
-// Middleware with server middleware.
 func Middleware(m ...middleware.Middleware) ServerOption {
-	return func(s *Server) {
-		s.middleware.Use(m...)
-	}
+	_ = "STUB: not implemented"
+	return *new(ServerOption)
 }
 
 func StreamMiddleware(m ...middleware.Middleware) ServerOption {
-	return func(s *Server) {
-		s.streamMiddleware.Use(m...)
-	}
+	_ = "STUB: not implemented"
+	return *new(ServerOption)
 }
 
-// CustomHealth Checks server.
-func CustomHealth() ServerOption {
-	return func(s *Server) {
-		s.customHealth = true
-	}
-}
+func CustomHealth() ServerOption { _ = "STUB: not implemented"; return *new(ServerOption) }
 
-// TLSConfig with TLS config.
-func TLSConfig(c *tls.Config) ServerOption {
-	return func(s *Server) {
-		s.tlsConf = c
-	}
-}
+func TLSConfig(c *tls.Config) ServerOption { _ = "STUB: not implemented"; return *new(ServerOption) }
 
-// Listener with server lis
-func Listener(lis net.Listener) ServerOption {
-	return func(s *Server) {
-		s.lis = lis
-	}
-}
+func Listener(lis net.Listener) ServerOption { _ = "STUB: not implemented"; return *new(ServerOption) }
 
-// UnaryInterceptor returns a ServerOption that sets the UnaryServerInterceptor for the server.
 func UnaryInterceptor(in ...grpc.UnaryServerInterceptor) ServerOption {
-	return func(s *Server) {
-		s.unaryInts = in
-	}
+	_ = "STUB: not implemented"
+	return *new(ServerOption)
 }
 
-// StreamInterceptor returns a ServerOption that sets the StreamServerInterceptor for the server.
 func StreamInterceptor(in ...grpc.StreamServerInterceptor) ServerOption {
-	return func(s *Server) {
-		s.streamInts = in
-	}
+	_ = "STUB: not implemented"
+	return *new(ServerOption)
 }
 
-// DisableReflection disable grpc reflection.
-func DisableReflection() ServerOption {
-	return func(s *Server) {
-		s.disableReflection = true
-	}
-}
+func DisableReflection() ServerOption { _ = "STUB: not implemented"; return *new(ServerOption) }
 
-// Options with grpc options.
 func Options(opts ...grpc.ServerOption) ServerOption {
-	return func(s *Server) {
-		s.grpcOpts = opts
-	}
+	_ = "STUB: not implemented"
+	return *new(ServerOption)
 }
 
-// Server is a gRPC server wrapper.
 type Server struct {
 	*grpc.Server
 	baseCtx           context.Context
@@ -142,126 +87,17 @@ type Server struct {
 	disableReflection bool
 }
 
-// NewServer creates a gRPC server by options.
-func NewServer(opts ...ServerOption) *Server {
-	srv := &Server{
-		baseCtx:          context.Background(),
-		network:          "tcp",
-		address:          ":0",
-		timeout:          1 * time.Second,
-		health:           health.NewServer(),
-		middleware:       matcher.New(),
-		streamMiddleware: matcher.New(),
-	}
-	for _, o := range opts {
-		o(srv)
-	}
-	unaryInts := []grpc.UnaryServerInterceptor{
-		srv.unaryServerInterceptor(),
-	}
-	streamInts := []grpc.StreamServerInterceptor{
-		srv.streamServerInterceptor(),
-	}
-	if len(srv.unaryInts) > 0 {
-		unaryInts = append(unaryInts, srv.unaryInts...)
-	}
-	if len(srv.streamInts) > 0 {
-		streamInts = append(streamInts, srv.streamInts...)
-	}
-	grpcOpts := []grpc.ServerOption{
-		grpc.ChainUnaryInterceptor(unaryInts...),
-		grpc.ChainStreamInterceptor(streamInts...),
-	}
-	if srv.tlsConf != nil {
-		grpcOpts = append(grpcOpts, grpc.Creds(credentials.NewTLS(srv.tlsConf)))
-	}
-	if len(srv.grpcOpts) > 0 {
-		grpcOpts = append(grpcOpts, srv.grpcOpts...)
-	}
-	srv.Server = grpc.NewServer(grpcOpts...)
-	// internal register
-	if !srv.customHealth {
-		grpc_health_v1.RegisterHealthServer(srv.Server, srv.health)
-	}
-	// reflection register
-	if !srv.disableReflection {
-		reflection.Register(srv.Server)
-	}
-	// admin register
-	srv.adminClean, _ = admin.Register(srv.Server)
-	return srv
-}
+func NewServer(opts ...ServerOption) *Server { _ = "STUB: not implemented"; return nil }
 
-// Use uses a service middleware with selector.
-// selector:
-//   - '/*'
-//   - '/helloworld.v1.Greeter/*'
-//   - '/helloworld.v1.Greeter/SayHello'
 func (s *Server) Use(selector string, m ...middleware.Middleware) {
-	s.middleware.Add(selector, m...)
+	_ = "STUB: not implemented"
+	return
 }
 
-// Endpoint return a real address to registry endpoint.
-// examples:
-//
-//	grpc://127.0.0.1:9000?isSecure=false
-func (s *Server) Endpoint() (*url.URL, error) {
-	if err := s.listenAndEndpoint(); err != nil {
-		return nil, s.err
-	}
-	return s.endpoint, nil
-}
+func (s *Server) Endpoint() (*url.URL, error) { _ = "STUB: not implemented"; return nil, nil }
 
-// Start start the gRPC server.
-func (s *Server) Start(ctx context.Context) error {
-	if err := s.listenAndEndpoint(); err != nil {
-		return s.err
-	}
-	s.baseCtx = ctx
-	log.Info("[gRPC] server listening", "addr", s.lis.Addr().String())
-	s.health.Resume()
-	return s.Serve(s.lis)
-}
+func (s *Server) Start(ctx context.Context) error { _ = "STUB: not implemented"; return nil }
 
-// Stop stop the gRPC server.
-func (s *Server) Stop(ctx context.Context) error {
-	if s.adminClean != nil {
-		s.adminClean()
-	}
-	s.health.Shutdown()
+func (s *Server) Stop(ctx context.Context) error { _ = "STUB: not implemented"; return nil }
 
-	done := make(chan struct{})
-	go func() {
-		defer close(done)
-		log.Info("[gRPC] server stopping")
-		s.GracefulStop()
-	}()
-
-	select {
-	case <-done:
-	case <-ctx.Done():
-		log.Warn("[gRPC] server couldn't stop gracefully in time, doing force stop")
-		s.Server.Stop()
-	}
-	return nil
-}
-
-func (s *Server) listenAndEndpoint() error {
-	if s.lis == nil {
-		lis, err := net.Listen(s.network, s.address)
-		if err != nil {
-			s.err = err
-			return err
-		}
-		s.lis = lis
-	}
-	if s.endpoint == nil {
-		addr, err := host.Extract(s.address, s.lis)
-		if err != nil {
-			s.err = err
-			return err
-		}
-		s.endpoint = endpoint.NewEndpoint(endpoint.Scheme("grpc", s.tlsConf != nil), addr)
-	}
-	return s.err
-}
+func (s *Server) listenAndEndpoint() error { _ = "STUB: not implemented"; return nil }

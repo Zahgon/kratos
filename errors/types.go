@@ -1,112 +1,41 @@
-// nolint:mnd
 package errors
 
-// BadRequest new BadRequest error that is mapped to a 400 response.
-func BadRequest(reason, message string) *Error {
-	return New(400, reason, message)
-}
+func BadRequest(reason, message string) *Error { _ = "STUB: not implemented"; return nil }
 
-// IsBadRequest determines if err is an error which indicates a BadRequest error.
-// It supports wrapped errors.
-func IsBadRequest(err error) bool {
-	return Code(err) == 400
-}
+func IsBadRequest(err error) bool { _ = "STUB: not implemented"; return false }
 
-// Unauthorized new Unauthorized error that is mapped to a 401 response.
-func Unauthorized(reason, message string) *Error {
-	return New(401, reason, message)
-}
+func Unauthorized(reason, message string) *Error { _ = "STUB: not implemented"; return nil }
 
-// IsUnauthorized determines if err is an error which indicates an Unauthorized error.
-// It supports wrapped errors.
-func IsUnauthorized(err error) bool {
-	return Code(err) == 401
-}
+func IsUnauthorized(err error) bool { _ = "STUB: not implemented"; return false }
 
-// Forbidden new Forbidden error that is mapped to a 403 response.
-func Forbidden(reason, message string) *Error {
-	return New(403, reason, message)
-}
+func Forbidden(reason, message string) *Error { _ = "STUB: not implemented"; return nil }
 
-// IsForbidden determines if err is an error which indicates a Forbidden error.
-// It supports wrapped errors.
-func IsForbidden(err error) bool {
-	return Code(err) == 403
-}
+func IsForbidden(err error) bool { _ = "STUB: not implemented"; return false }
 
-// NotFound new NotFound error that is mapped to a 404 response.
-func NotFound(reason, message string) *Error {
-	return New(404, reason, message)
-}
+func NotFound(reason, message string) *Error { _ = "STUB: not implemented"; return nil }
 
-// IsNotFound determines if err is an error which indicates an NotFound error.
-// It supports wrapped errors.
-func IsNotFound(err error) bool {
-	return Code(err) == 404
-}
+func IsNotFound(err error) bool { _ = "STUB: not implemented"; return false }
 
-// Conflict new Conflict error that is mapped to a 409 response.
-func Conflict(reason, message string) *Error {
-	return New(409, reason, message)
-}
+func Conflict(reason, message string) *Error { _ = "STUB: not implemented"; return nil }
 
-// IsConflict determines if err is an error which indicates a Conflict error.
-// It supports wrapped errors.
-func IsConflict(err error) bool {
-	return Code(err) == 409
-}
+func IsConflict(err error) bool { _ = "STUB: not implemented"; return false }
 
-// TooManyRequests new TooManyRequests error that is mapped to an HTTP 429 response.
-func TooManyRequests(reason, message string) *Error {
-	return New(429, reason, message)
-}
+func TooManyRequests(reason, message string) *Error { _ = "STUB: not implemented"; return nil }
 
-// IsTooManyRequests determines if err is an error which indicates a TooManyRequests error.
-// It supports wrapped errors.
-func IsTooManyRequests(err error) bool {
-	return Code(err) == 429
-}
+func IsTooManyRequests(err error) bool { _ = "STUB: not implemented"; return false }
 
-// ClientClosed new ClientClosed error that is mapped to an HTTP 499 response.
-func ClientClosed(reason, message string) *Error {
-	return New(499, reason, message)
-}
+func ClientClosed(reason, message string) *Error { _ = "STUB: not implemented"; return nil }
 
-// IsClientClosed determines if err is an error which indicates a IsClientClosed error.
-// It supports wrapped errors.
-func IsClientClosed(err error) bool {
-	return Code(err) == 499
-}
+func IsClientClosed(err error) bool { _ = "STUB: not implemented"; return false }
 
-// InternalServer new InternalServer error that is mapped to a 500 response.
-func InternalServer(reason, message string) *Error {
-	return New(500, reason, message)
-}
+func InternalServer(reason, message string) *Error { _ = "STUB: not implemented"; return nil }
 
-// IsInternalServer determines if err is an error which indicates an Internal error.
-// It supports wrapped errors.
-func IsInternalServer(err error) bool {
-	return Code(err) == 500
-}
+func IsInternalServer(err error) bool { _ = "STUB: not implemented"; return false }
 
-// ServiceUnavailable new ServiceUnavailable error that is mapped to an HTTP 503 response.
-func ServiceUnavailable(reason, message string) *Error {
-	return New(503, reason, message)
-}
+func ServiceUnavailable(reason, message string) *Error { _ = "STUB: not implemented"; return nil }
 
-// IsServiceUnavailable determines if err is an error which indicates an Unavailable error.
-// It supports wrapped errors.
-func IsServiceUnavailable(err error) bool {
-	return Code(err) == 503
-}
+func IsServiceUnavailable(err error) bool { _ = "STUB: not implemented"; return false }
 
-// GatewayTimeout new GatewayTimeout error that is mapped to an HTTP 504 response.
-func GatewayTimeout(reason, message string) *Error {
-	return New(504, reason, message)
-}
+func GatewayTimeout(reason, message string) *Error { _ = "STUB: not implemented"; return nil }
 
-// IsGatewayTimeout determines if err is an error which indicates a GatewayTimeout error.
-// It supports wrapped errors.
-func IsGatewayTimeout(err error) bool {
-	return Code(err) == 504
-}
+func IsGatewayTimeout(err error) bool { _ = "STUB: not implemented"; return false }

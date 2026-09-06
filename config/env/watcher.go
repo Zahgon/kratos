@@ -14,17 +14,10 @@ type watcher struct {
 }
 
 func NewWatcher() (config.Watcher, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	return &watcher{ctx: ctx, cancel: cancel}, nil
+	_ = "STUB: not implemented"
+	return *new(config.Watcher), nil
 }
 
-// Next will be blocked until the Stop method is called
-func (w *watcher) Next() ([]*config.KeyValue, error) {
-	<-w.ctx.Done()
-	return nil, w.ctx.Err()
-}
+func (w *watcher) Next() ([]*config.KeyValue, error) { _ = "STUB: not implemented"; return nil, nil }
 
-func (w *watcher) Stop() error {
-	w.cancel()
-	return nil
-}
+func (w *watcher) Stop() error { _ = "STUB: not implemented"; return nil }

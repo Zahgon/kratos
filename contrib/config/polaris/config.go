@@ -1,18 +1,11 @@
 package config
 
 import (
-	"errors"
-	"fmt"
-	"path/filepath"
-	"strings"
-
 	"github.com/polarismesh/polaris-go"
-	"github.com/polarismesh/polaris-go/pkg/model"
 
 	"github.com/go-kratos/kratos/v3/config"
 )
 
-// Option is polaris config option.
 type Option func(o *options)
 
 type options struct {
@@ -22,26 +15,11 @@ type options struct {
 	configFile polaris.ConfigFile
 }
 
-// WithNamespace with polaris config namespace
-func WithNamespace(namespace string) Option {
-	return func(o *options) {
-		o.namespace = namespace
-	}
-}
+func WithNamespace(namespace string) Option { _ = "STUB: not implemented"; return *new(Option) }
 
-// WithFileGroup with polaris config fileGroup
-func WithFileGroup(fileGroup string) Option {
-	return func(o *options) {
-		o.fileGroup = fileGroup
-	}
-}
+func WithFileGroup(fileGroup string) Option { _ = "STUB: not implemented"; return *new(Option) }
 
-// WithFileName with polaris config fileName
-func WithFileName(fileName string) Option {
-	return func(o *options) {
-		o.fileName = fileName
-	}
-}
+func WithFileName(fileName string) Option { _ = "STUB: not implemented"; return *new(Option) }
 
 type source struct {
 	client  polaris.ConfigAPI
@@ -49,60 +27,13 @@ type source struct {
 }
 
 func New(client polaris.ConfigAPI, opts ...Option) (config.Source, error) {
-	options := &options{
-		namespace: "default",
-		fileGroup: "",
-		fileName:  "",
-	}
-
-	for _, opt := range opts {
-		opt(options)
-	}
-
-	if options.fileGroup == "" {
-		return nil, errors.New("fileGroup invalid")
-	}
-
-	if options.fileName == "" {
-		return nil, errors.New("fileName invalid")
-	}
-
-	return &source{
-		client:  client,
-		options: options,
-	}, nil
+	_ = "STUB: not implemented"
+	return *new(config.Source), nil
 }
 
-// Load return the config values
-func (s *source) Load() ([]*config.KeyValue, error) {
-	configFile, err := s.client.FetchConfigFile(&polaris.GetConfigFileRequest{
-		GetConfigFileRequest: &model.GetConfigFileRequest{
-			Namespace: s.options.namespace,
-			FileGroup: s.options.fileGroup,
-			FileName:  s.options.fileName,
-			Subscribe: true,
-		},
-	})
-	if err != nil {
-		fmt.Println("fail to get config.", err)
-		return nil, err
-	}
+func (s *source) Load() ([]*config.KeyValue, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	content := configFile.GetContent()
-	k := s.options.fileName
-
-	s.options.configFile = configFile
-
-	return []*config.KeyValue{
-		{
-			Key:    k,
-			Value:  []byte(content),
-			Format: strings.TrimPrefix(filepath.Ext(k), "."),
-		},
-	}, nil
-}
-
-// Watch return the watcher
 func (s *source) Watch() (config.Watcher, error) {
-	return newWatcher(s.options.configFile), nil
+	_ = "STUB: not implemented"
+	return *new(config.Watcher), nil
 }

@@ -17,44 +17,13 @@ type watcher struct {
 }
 
 func newWatch(ctx context.Context, cli *API, serverName string) (*watcher, error) {
-	w := &watcher{
-		ctx:        ctx,
-		cli:        cli,
-		serverName: serverName,
-		watchChan:  make(chan struct{}, 1),
-	}
-	w.ctx, w.cancel = context.WithCancel(ctx)
-	e := w.cli.Subscribe(
-		serverName,
-		func() {
-			w.watchChan <- struct{}{}
-		},
-	)
-	return w, e
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (w *watcher) Next() (services []*registry.ServiceInstance, err error) {
-	select {
-	case <-w.ctx.Done():
-		return nil, w.ctx.Err()
-	case <-w.watchChan:
-		instances := w.cli.GetService(w.ctx, w.serverName)
-		services = make([]*registry.ServiceInstance, 0, len(instances))
-		for _, instance := range instances {
-			services = append(services, &registry.ServiceInstance{
-				ID:        instance.Metadata["ID"],
-				Name:      instance.Metadata["Name"],
-				Version:   instance.Metadata["Version"],
-				Endpoints: []string{instance.Metadata["Endpoints"]},
-				Metadata:  instance.Metadata,
-			})
-		}
-		return
-	}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-func (w *watcher) Stop() error {
-	w.cancel()
-	w.cli.Unsubscribe(w.serverName)
-	return nil
-}
+func (w *watcher) Stop() error { _ = "STUB: not implemented"; return nil }

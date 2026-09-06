@@ -1,16 +1,15 @@
 package zookeeper
 
 import (
-	"encoding/json"
-
 	"github.com/go-kratos/kratos/v3/registry"
 )
 
 func marshal(si *registry.ServiceInstance) ([]byte, error) {
-	return json.Marshal(si)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func unmarshal(data []byte) (si *registry.ServiceInstance, err error) {
-	err = json.Unmarshal(data, &si)
-	return
+	_ = "STUB: not implemented"
+	return nil, nil
 }
